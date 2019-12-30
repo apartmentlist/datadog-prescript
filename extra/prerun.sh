@@ -23,6 +23,9 @@ function set_variables {
     DATADOG_CONF="$DD_CONF_DIR/datadog.yaml"
   fi
   YAML_INDENT='  '
+  if [[ -z $AL_SERVICE ]]; then
+    AL_SERVICE="unknown"
+  fi
   if [[ -z $AL_PROC_TYPE ]] && [[ -n $DYNO ]]; then
     AL_PROC_TYPE=${DYNO%%.*}
   fi
@@ -35,7 +38,7 @@ function set_variables {
 }
 
 function set_tags {
-  TAGS="${YAML_INDENT}- al_proc_type:$AL_PROC_TYPE\n${YAML_INDENT}- al_proc_subtype:$AL_PROC_SUBTYPE"
+  TAGS="${YAML_INDENT}- al_service:$AL_SERVICE\n${YAML_INDENT}- al_proc_type:$AL_PROC_TYPE\n${YAML_INDENT}- al_proc_subtype:$AL_PROC_SUBTYPE"
   echo "Extra tags are: \"${TAGS}\"" | indent
 }
 
