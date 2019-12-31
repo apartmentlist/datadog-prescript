@@ -24,21 +24,32 @@ function set_variables {
   fi
   YAML_INDENT='  '
   if [[ -z $AL_SERVICE ]]; then
-    AL_SERVICE="unknown"
-  fi
-  if [[ -z $AL_PROC_TYPE ]] && [[ -n $DYNO ]]; then
-    AL_PROC_TYPE=${DYNO%%.*}
+    if [[ -n $DD_AL_SERVICE ]]; then
+      AL_SERVICE=$DD_AL_SERVICE
+    else
+      AL_SERVICE="unknown"
+    fi
   fi
   if [[ -z $AL_PROC_TYPE ]]; then
-    AL_PROC_TYPE="unknown"
+    if [[ -n $DD_AL_PROC_TYPE ]]; then
+      AL_PROC_TYPE=$DD_AL_PROC_TYPE
+    elif [[ -n $DYNO ]]; then
+      AL_PROC_TYPE=${DYNO%%.*}
+    else
+      AL_PROC_TYPE="unknown"
+    fi
   fi
   if [[ -z $AL_PROC_SUBTYPE ]]; then
-    AL_PROC_SUBTYPE="unknown"
+    if [[ -n $DD_AL_PROC_SUBTYPE ]]; then
+      AL_PROC_SUBTYPE=$DD_AL_PROC_SUBTYPE
+    else
+      AL_PROC_SUBTYPE="unknown"
+    fi
   fi
 }
 
 function set_tags {
-  TAGS="${YAML_INDENT}- al_service:$AL_SERVICE\n${YAML_INDENT}- al_proc_type:$AL_PROC_TYPE\n${YAML_INDENT}- al_proc_subtype:$AL_PROC_SUBTYPE"
+  TAGS="${YAML_INDENT}- al_service:${AL_SERVICE}\n${YAML_INDENT}- al_proc_type:${AL_PROC_TYPE}\n${YAML_INDENT}- al_proc_subtype:${AL_PROC_SUBTYPE}"
   echo "Extra tags are: \"${TAGS}\"" | indent
 }
 
