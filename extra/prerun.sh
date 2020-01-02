@@ -11,6 +11,7 @@ function main {
   set_variables
   if [[ $DYNO_TYPE == 'release' ]]; then
     echo 'Dyno type is release, not running this' | indent
+    export DISABLE_DATADOG_AGENT=true
     return 0
   fi
   echo "Datadog config path: ${DATADOG_CONF}" | indent
