@@ -24,6 +24,6 @@ function indent() {
 
 topic "Datadog-prescript compile: Installing prerun script"
 
-mkdir -p "$BUILD_DIR/datadog"
+mkdir -p "$BUILD_DIR/datadog" || true
 cp "$BUILDPACK_DIR/extra/prerun.sh" "$BUILD_DIR/datadog/"
 chmod +x "$BUILD_DIR/datadog/prerun.sh"

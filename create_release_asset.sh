@@ -12,10 +12,10 @@ TAR_FILE=$VERSION.tar
 tar cfv $TAR_FILE \
   --exclude=".git*" \
   --exclude="test" \
-  --exclude="README.md" \
   --exclude=".DS_Store" \
   --exclude="*.tar" \
   --exclude="*.tar.gz" \
+  --exclude="screenshot-buildpack.png" \
   --exclude="create_release_asset.sh" \
   .
 
