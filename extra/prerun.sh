@@ -9,6 +9,10 @@ set -o pipefail
 function main {
   topic 'Datadog Prerun:'
   set_variables
+  if [[ $DYNO_TYPE == 'release' ]]; then
+    echo 'Dyno type is release, not running this' | indent
+    return 0
+  fi
   echo "Datadog config path: ${DATADOG_CONF}" | indent
   set_tags
   modify_conifg
@@ -17,33 +21,36 @@ function main {
 # ===============================================
 
 function set_variables {
-  if [ -z $DATADOG_CONF ]; then
+  if [[ -z $DATADOG_CONF ]]; then
     APT_DIR="$HOME/.apt"
     DD_CONF_DIR="$APT_DIR/etc/datadog-agent"
     DATADOG_CONF="$DD_CONF_DIR/datadog.yaml"
   fi
   YAML_INDENT='  '
+  if [[ -n $DYNO ]]; then
+    DYNO_TYPE=${DYNO%%.*}
+  fi
   if [[ -z $AL_SERVICE ]]; then
     if [[ -n $DD_AL_SERVICE ]]; then
       AL_SERVICE=$DD_AL_SERVICE
     else
-      AL_SERVICE="unknown"
+      AL_SERVICE='unknown'
     fi
   fi
   if [[ -z $AL_PROC_TYPE ]]; then
     if [[ -n $DD_AL_PROC_TYPE ]]; then
       AL_PROC_TYPE=$DD_AL_PROC_TYPE
     elif [[ -n $DYNO ]]; then
-      AL_PROC_TYPE=${DYNO%%.*}
+      AL_PROC_TYPE=$DYNO_TYPE
     else
-      AL_PROC_TYPE="unknown"
+      AL_PROC_TYPE='unknown'
     fi
   fi
   if [[ -z $AL_PROC_SUBTYPE ]]; then
     if [[ -n $DD_AL_PROC_SUBTYPE ]]; then
       AL_PROC_SUBTYPE=$DD_AL_PROC_SUBTYPE
     else
-      AL_PROC_SUBTYPE="unknown"
+      AL_PROC_SUBTYPE='unknown'
     fi
   fi
 }
@@ -55,8 +62,8 @@ function set_tags {
 
 function modify_conifg {
   case $(uname) in
-    Darwin) SED_PROG="gsed";;
-    *)      SED_PROG="sed";;
+    Darwin) SED_PROG='gsed';;
+    *)      SED_PROG='sed';;
   esac
 
   # The following is based on Datadog's buildpack.
