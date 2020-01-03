@@ -27,3 +27,17 @@ topic "Datadog-prescript compile: Installing prerun script"
 mkdir -p "$BUILD_DIR/datadog" || true
 cp "$BUILDPACK_DIR/extra/prerun.sh" "$BUILD_DIR/datadog/"
 chmod +x "$BUILD_DIR/datadog/prerun.sh"
+
+topic "Datadog-prescript compile: Installing jtc (json processor)"
+
+if [[ -x "$(command -v jtc)" ]]; then
+  echo "jtc is installed already!?"  | indent
+else
+  jtc_version="1.75b"
+  jtc_filename="jtc-linux-64.v${jtc_version}"
+  jtc_binary_64="https://github.com/ldn-softdev/jtc/releases/download/${jtc_version}/${jtc_filename}"
+  curl -LO $jtc_binary_64
+  mv $jtc_filename $BUILD_DIR/bin/jtc
+  chmod a+x $BUILD_DIR/bin/jtc
+  echo "done installing jtc"  | indent
+fi

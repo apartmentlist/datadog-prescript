@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-set -o pipefail
-
 # main
 # ===============================================
 
@@ -16,7 +13,7 @@ function main {
   fi
   echo "Datadog config path: ${DATADOG_CONF}" | indent
   set_tags
-  modify_conifg
+  modify_config
 }
 
 # ===============================================
@@ -38,6 +35,12 @@ function set_variables {
       AL_SERVICE='unknown'
     fi
   fi
+
+  if [[ -n $DD_AL_PROCMAP ]] && [[ -n $DYNO_TYPE ]]; then
+    AL_PROC_TYPE=$(<<<$DD_AL_PROCMAP /app/bin/jtc -w"[$DYNO_TYPE][0]" -qq)
+    AL_PROC_SUBTYPE=$(<<<$DD_AL_PROCMAP /app/bin/jtc -w"[$DYNO_TYPE][1]" -qq)
+  fi
+
   if [[ -z $AL_PROC_TYPE ]]; then
     if [[ -n $DD_AL_PROC_TYPE ]]; then
       AL_PROC_TYPE=$DD_AL_PROC_TYPE
@@ -61,15 +64,10 @@ function set_tags {
   echo "Extra tags are: \"${TAGS}\"" | indent
 }
 
-function modify_conifg {
-  case $(uname) in
-    Darwin) SED_PROG='gsed';;
-    *)      SED_PROG='sed';;
-  esac
-
+function modify_config {
   # The following is based on Datadog's buildpack.
   # See https://github.com/DataDog/heroku-buildpack-datadog/blob/a9efed3f683f906e0fb62b3650f3f2214006075e/extra/datadog.sh#L58-L62
-  $SED_PROG -i "s/^\(## @param tags\)/$TAGS\n\1/" $DATADOG_CONF
+  sed -i "s/^\(## @param tags\)/$TAGS\n\1/" $DATADOG_CONF
 }
 
 # utils

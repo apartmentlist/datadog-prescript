@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# https://devcenter.heroku.com/articles/buildpack-api#bin-release
-
-# do nothing

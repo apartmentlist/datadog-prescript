@@ -2,16 +2,12 @@
 
 This is a Heroku buildpack to add `datadog/prerunscript.sh` in your dyno, and it will add extra tags in the agent.
 
-Note: Buildpack is order-sensitive. This buildpack **has to be** precedent to Datadog Buildpack. It means that `https://github.com/apartmentlist/datadog-prescript.git#_VERSION_` should be above `https://github.com/DataDog/heroku-buildpack-datadog.git` as it shows below.
+## Required Config Var
 
-<img src="screenshot-buildpack.png" />
+- `DD_AL_PROCMAP`: JSON of `{ key: [val0, val1], …}`
+	- `key` should be the dyno type.
+	- `val0` will be used as `al_proc_type`
+	- `val1` will be used as `al_proc_subtype`
 
-If you prefer a command-line better (in the following example, `_VESRION_` is `0.2`):
+Note: Buildpack is order-sensitive, but this buildpack does not care where it stands because the important execution timing is when `/app/.profile.d/datadog.sh` runs, in other words: the boot time.
 
-```
-% heroku buildpacks --app alp-***
-=== alp-*** Buildpack URLs
-1. https://github.com/apartmentlist/datadog-prescript.git#0.2
-2. https://github.com/DataDog/heroku-buildpack-datadog.git
-3. heroku/ruby
-```
