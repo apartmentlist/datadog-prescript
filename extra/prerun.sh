@@ -37,12 +37,20 @@ function set_variables {
   fi
 
   if [[ -n $DD_AL_PROCMAP ]] && [[ -n $DYNO_TYPE ]]; then
-    AL_PROC_TYPE=$(<<<$DD_AL_PROCMAP /app/bin/jtc -w"[$DYNO_TYPE][0]" -qq)
-    AL_PROC_SUBTYPE=$(<<<$DD_AL_PROCMAP /app/bin/jtc -w"[$DYNO_TYPE][1]" -qq)
+    jtc_exec=$(command -v jtc)
+    if [[ -n $jtc_exec ]]; then
+      jtc_exec="/app/bin/jtc"
+    fi
+    if [[ -x "$jtc_exec" ]]; then
+      procmap_type=$(<<<$DD_AL_PROCMAP $jtc_exec -w"[$DYNO_TYPE][0]" -qq)
+      procmap_subtype=$(<<<$DD_AL_PROCMAP $jtc_exec -w"[$DYNO_TYPE][1]" -qq)
+    fi
   fi
 
   if [[ -z $AL_PROC_TYPE ]]; then
-    if [[ -n $DD_AL_PROC_TYPE ]]; then
+    if [[ -n $procmap_type ]]; then
+      AL_PROC_TYPE=$procmap_type
+    elif [[ -n $DD_AL_PROC_TYPE ]]; then
       AL_PROC_TYPE=$DD_AL_PROC_TYPE
     elif [[ -n $DYNO ]]; then
       AL_PROC_TYPE=$DYNO_TYPE
@@ -51,7 +59,9 @@ function set_variables {
     fi
   fi
   if [[ -z $AL_PROC_SUBTYPE ]]; then
-    if [[ -n $DD_AL_PROC_SUBTYPE ]]; then
+    if [[ -n $procmap_subtype ]]; then
+      AL_PROC_SUBTYPE=$procmap_subtype
+    elif [[ -n $DD_AL_PROC_SUBTYPE ]]; then
       AL_PROC_SUBTYPE=$DD_AL_PROC_SUBTYPE
     else
       AL_PROC_SUBTYPE='unknown'
