@@ -37,6 +37,7 @@ else
   jtc_filename="jtc-linux-64.v${jtc_version}"
   jtc_binary_64="https://github.com/ldn-softdev/jtc/releases/download/${jtc_version}/${jtc_filename}"
   curl -LO $jtc_binary_64
+  mkdir -p $BUILD_DIR/bin || true
   mv $jtc_filename $BUILD_DIR/bin/jtc
   chmod a+x $BUILD_DIR/bin/jtc
   echo "done installing jtc"  | indent
