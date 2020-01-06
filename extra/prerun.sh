@@ -38,7 +38,7 @@ function set_variables {
 
   if [[ -n $DD_AL_PROCMAP ]] && [[ -n $DYNO_TYPE ]]; then
     jtc_exec=$(command -v jtc)
-    if [[ -n $jtc_exec ]]; then
+    if [[ -z $jtc_exec ]]; then
       jtc_exec="/app/bin/jtc"
     fi
     if [[ -x "$jtc_exec" ]]; then
