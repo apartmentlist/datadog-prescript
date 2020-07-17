@@ -1,3 +1,7 @@
+# ARCHIVED – We don't run code on Heroku, so this is not needed anymore.
+
+----
+
 # datadog-prescript
 
 This is a Heroku buildpack to add `datadog/prerunscript.sh` in your dyno, and it will add extra tags in the agent.
